@@ -45,4 +45,3 @@ services:
   - type: pserv
     name: snapcircle-database
     plan: free
-    ipAllowList: []
