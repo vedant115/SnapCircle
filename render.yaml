@@ -2,6 +2,8 @@ services:
   # PostgreSQL Database
   - type: pserv
     name: snapcircle-database
+    databaseName: snapcircle_db
+    databaseUser: snapcircle_user
     plan: free
 
   # Backend API Service
