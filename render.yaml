@@ -29,6 +29,7 @@ services:
       - key: DATABASE_URL
         fromDatabase:
           name: snapcircle-database
+          property: connectionString
       - key: SECRET_KEY
         generateValue: true
       - key: AWS_ACCESS_KEY_ID
