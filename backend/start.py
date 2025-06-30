@@ -10,31 +10,48 @@ from pathlib import Path
 def run_migrations():
     print("🔄 Running database migrations...")
     try:
-        alembic_dir = Path(__file__).parent
-        os.chdir(alembic_dir)
-        ini = alembic_dir / "alembic.ini"
-        if ini.exists():
-            result = subprocess.run(
-                ["alembic", "-c", str(ini), "upgrade", "head"],
-                env={**os.environ},
-                capture_output=True, text=True
-            )
-            if result.returncode == 0:
-                print("✅ Database migrations completed successfully")
-            else:
-                print(f"⚠️ Migration warning: {result.stderr}")
-        else:
-            print("⚠️ No alembic.ini found, skipping migrations")
-    except Exception as e:
-        print(f"⚠️ Migration error (continuing anyway): {e}")
+        # Make alembic commands more visible in logs
+        print("=" * 50)
+        print("RUNNING ALEMBIC MIGRATIONS")
+        print("=" * 50)
+        
+        # Run migrations with verbose output
+        result = subprocess.run(
+            ["alembic", "upgrade", "head", "--verbose"],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        
+        # Print migration output for debugging
+        print(f"STDOUT: {result.stdout}")
+        if result.stderr:
+            print(f"STDERR: {result.stderr}")
+            
+        print("✅ Database migrations completed")
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Database migration failed: {e}")
+        print(f"STDOUT: {e.stdout}")
+        print(f"STDERR: {e.stderr}")
+        
+        # Fall back to create_tables if migrations fail
+        print("⚠️ Falling back to direct table creation...")
+        create_tables()
 
 def create_tables():
     print("🔄 Ensuring database tables exist...")
     try:
-        # your connection module must read DATABASE_URL from os.environ
+        # Import all models to ensure they're registered with Base
+        from models.user import User
+        from models.event import Event
+        from models.photo import Photo
+        from models.photo_face import PhotoFace
+        # Import any other models here
+        
+        # Create all tables
         from database.connection import engine, Base
         Base.metadata.create_all(bind=engine)
-        print("✅ Database tables verified")
+        print("✅ Database tables created successfully")
     except Exception as e:
         print(f"❌ Database table creation failed: {e}")
         sys.exit(1)
@@ -57,3 +74,5 @@ if __name__ == "__main__":
     run_migrations()
     create_tables()
     start_server()
+
+
