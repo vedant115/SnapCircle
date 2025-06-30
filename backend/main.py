@@ -15,9 +15,15 @@ app = FastAPI(
 
 # CORS middleware - Production ready
 frontend_url = os.getenv("FRONTEND_URL", "http://localhost:3000")
+if not frontend_url:
+    import logging; logging.error("FRONTEND_URL not set in environment!")
+else:
+    import logging; logging.info(f"Allowing CORS from: {frontend_url}")
+    
 allowed_origins = [
     "http://localhost:3000",  # Local development
     "http://localhost:5173",  # Vite dev server
+    "https://snapcircle-frontend.onrender.com",
     frontend_url,  # Production frontend
 ]
 
