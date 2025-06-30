@@ -4,21 +4,20 @@ Production startup script for SnapCircle backend on Render.
 Handles database migrations and starts the FastAPI server.
 """
 
-import os
-import sys
-import subprocess
+import os, sys, subprocess
 from pathlib import Path
 
 def run_migrations():
-    """Run database migrations if needed."""
     print("🔄 Running database migrations...")
     try:
-        # Check if alembic is configured
-        if Path("alembic.ini").exists():
+        alembic_dir = Path(__file__).parent
+        os.chdir(alembic_dir)
+        ini = alembic_dir / "alembic.ini"
+        if ini.exists():
             result = subprocess.run(
-                ["alembic", "upgrade", "head"],
-                capture_output=True,
-                text=True
+                ["alembic", "-c", str(ini), "upgrade", "head"],
+                env={**os.environ},
+                capture_output=True, text=True
             )
             if result.returncode == 0:
                 print("✅ Database migrations completed successfully")
@@ -30,9 +29,9 @@ def run_migrations():
         print(f"⚠️ Migration error (continuing anyway): {e}")
 
 def create_tables():
-    """Create tables if they don't exist."""
     print("🔄 Ensuring database tables exist...")
     try:
+        # your connection module must read DATABASE_URL from os.environ
         from database.connection import engine, Base
         Base.metadata.create_all(bind=engine)
         print("✅ Database tables verified")
@@ -41,28 +40,20 @@ def create_tables():
         sys.exit(1)
 
 def start_server():
-    """Start the FastAPI server."""
     print("🚀 Starting SnapCircle backend server...")
     port = os.getenv("PORT", "8000")
-
-    # Use uvicorn directly for production - optimized for Render free tier
     os.execvp("uvicorn", [
-        "uvicorn",
-        "main:app",
+        "uvicorn", "main:app",
         "--host", "0.0.0.0",
         "--port", port,
-        "--workers", "1",  # Single worker for free tier (512MB RAM limit)
-        "--timeout-keep-alive", "65",  # Handle Render's load balancer
-        "--access-log"  # Enable access logs for debugging
+        "--workers", "1",
+        "--timeout-keep-alive", "65",
+        "--access-log"
     ])
 
 if __name__ == "__main__":
     print("🎯 SnapCircle Backend - Production Startup")
     print("=" * 50)
-    
-    # Run migrations and create tables
     run_migrations()
     create_tables()
-    
-    # Start the server
     start_server()

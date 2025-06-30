@@ -1,24 +1,30 @@
+import os
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-import os
-from dotenv import load_dotenv
 
-load_dotenv()
+# 1) Pull directly from environment—no load_dotenv() in production
+DATABASE_URL = os.environ.get("DATABASE_URL")
+if not DATABASE_URL:
+    raise RuntimeError(
+        "🛑 DATABASE_URL environment variable is not set. "
+        "Did you wire it up in render.yaml?"
+    )
 
-# Database URL from environment variable
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://username:password@localhost:5432/snapcircle_db")
+# 2) Create SQLAlchemy engine with pre-ping for reliability
+engine = create_engine(DATABASE_URL, pool_pre_ping=True)
 
-# Create SQLAlchemy engine
-engine = create_engine(DATABASE_URL)
+# 3) Session factory
+SessionLocal = sessionmaker(
+    autocommit=False,
+    autoflush=False,
+    bind=engine,
+)
 
-# Create SessionLocal class
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-# Create Base class for models
+# 4) Base class for models
 Base = declarative_base()
 
-# Dependency to get database session
+# 5) Dependency for FastAPI endpoints
 def get_db():
     db = SessionLocal()
     try:
