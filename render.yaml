@@ -7,7 +7,18 @@ services:
   - type: web
     name: snapcircle-backend
     env: python
-    buildCommand: "cd backend && python -m pip install --upgrade pip && pip install --only-binary=:all: -r requirements.txt"
+    buildCommand: |
+      cd backend
+      python -m pip install --upgrade pip
+
+      # 1) install dlib binary wheel
+      pip install dlib-bin==19.24.6
+
+      # 2) install face-recognition-models from GitHub
+      pip install git+https://github.com/ageitgey/face_recognition_models.git@models-0.3.0#egg=face-recognition-models
+
+      # 3) install the rest as wheels only
+      pip install --only-binary=:all: -r requirements.txt
     startCommand: "cd backend && python start.py"
     plan: free
     envVars:
