@@ -1,11 +1,8 @@
-services:
-  # PostgreSQL Database
-  - type: pserv
-    name: snapcircle-database
-    databaseName: snapcircle_db
-    databaseUser: snapcircle_user
+databases:
+  - name: snapcircle-database
     plan: free
 
+services:
   # Backend API Service
   - type: web
     name: snapcircle-backend
@@ -21,7 +18,7 @@ services:
       - key: AWS_SECRET_ACCESS_KEY
         sync: false
       - key: AWS_REGION
-        value: us-east-1
+        value: eu-north-1
       - key: S3_BUCKET_NAME
         sync: false
       - key: USE_S3_STORAGE
