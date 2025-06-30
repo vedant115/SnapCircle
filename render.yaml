@@ -1,0 +1,48 @@
+services:
+  # Backend API Service
+  - type: web
+    name: snapcircle-backend
+    env: python
+    buildCommand: "cd backend && chmod +x build.sh && ./build.sh"
+    startCommand: "cd backend && python start.py"
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: SECRET_KEY
+        generateValue: true
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: AWS_REGION
+        value: us-east-1
+      - key: S3_BUCKET_NAME
+        sync: false
+      - key: USE_S3_STORAGE
+        value: true
+      - key: FRONTEND_URL
+        fromService:
+          type: web
+          name: snapcircle-frontend
+          property: url
+
+  # Frontend Static Site
+  - type: web
+    name: snapcircle-frontend
+    env: static
+    buildCommand: "cd frontend && npm install && npm run build"
+    staticPublishPath: frontend/dist
+    plan: free
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: snapcircle-backend
+          property: url
+
+  # PostgreSQL Database
+  - type: pserv
+    name: snapcircle-database
+    plan: free
+    ipAllowList: []
