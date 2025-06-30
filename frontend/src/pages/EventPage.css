@@ -1,0 +1,275 @@
+/* Face Processing Styles */
+.face-processing-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.face-processing-modal {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.processing-header h3 {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+}
+
+.processing-header p {
+  margin: 0 0 1.5rem 0;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.progress-container {
+  margin: 1.5rem 0;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 12px;
+  background: #f0f0f0;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #007bff, #0056b3);
+  border-radius: 6px;
+  transition: width 0.3s ease;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.progress-text {
+  font-weight: 600;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+.processing-info {
+  color: #666;
+  margin: 1.5rem 0;
+  text-align: left;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  margin: 0.75rem 0;
+  padding: 0.5rem;
+  background: #f8f9fa;
+  border-radius: 6px;
+}
+
+.info-icon {
+  margin-right: 0.75rem;
+  font-size: 1.2rem;
+}
+
+.processing-note {
+  margin: 1.5rem 0 0 0;
+  color: #666;
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+/* My Photos Styles */
+.face-recognition-active {
+  text-align: center;
+}
+
+.status-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: #f0f8ff;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.status-icon {
+  font-size: 2rem;
+}
+
+.status-message h4 {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+}
+
+.status-message p {
+  margin: 0;
+  color: #666;
+}
+
+.processing-results {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.processing-results h4 {
+  margin: 0 0 1rem 0;
+  color: #333;
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+}
+
+.result-item {
+  text-align: center;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 6px;
+}
+
+.result-number {
+  display: block;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #007bff;
+  margin-bottom: 0.5rem;
+}
+
+.result-label {
+  display: block;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.waiting-message {
+  text-align: center;
+  padding: 2rem;
+  background: #fff9e6;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.waiting-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.waiting-message h4 {
+  margin: 0 0 1rem 0;
+  color: #333;
+}
+
+.waiting-message p {
+  margin: 0;
+  color: #666;
+  line-height: 1.5;
+}
+
+.setup-face-recognition {
+  text-align: center;
+  padding: 2rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 2px dashed #ddd;
+}
+
+.setup-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.setup-face-recognition h4 {
+  margin: 0 0 1rem 0;
+  color: #333;
+}
+
+.setup-face-recognition p {
+  margin: 0 0 1.5rem 0;
+  color: #666;
+  line-height: 1.5;
+}
+
+/* My Photos Gallery */
+.my-photos-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.my-photo-item {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.my-photo-item:hover {
+  transform: translateY(-2px);
+}
+
+.my-photo-item img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.my-photo-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  color: white;
+  padding: 1rem;
+  transform: translateY(100%);
+  transition: transform 0.2s ease;
+}
+
+.my-photo-item:hover .my-photo-overlay {
+  transform: translateY(0);
+}
+
+.face-count {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.matched-indicator {
+  display: inline-block;
+  background: #28a745;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+}

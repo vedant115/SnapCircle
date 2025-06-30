@@ -1,0 +1,111 @@
+/* SelfieUpload Component Styles */
+
+.selfie-upload {
+  margin-bottom: 1rem;
+}
+
+.help-text {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.required {
+  color: #e74c3c;
+}
+
+.selfie-dropzone {
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: #fafafa;
+}
+
+.selfie-dropzone:hover:not(.disabled) {
+  border-color: #007bff;
+  background: #f0f8ff;
+}
+
+.selfie-dropzone.dragover {
+  border-color: #007bff;
+  background: #e3f2fd;
+}
+
+.selfie-dropzone.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: #f5f5f5;
+}
+
+.selfie-dropzone.error {
+  border-color: #e74c3c;
+  background: #fdf2f2;
+}
+
+.upload-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.dropzone-content h4 {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+}
+
+.dropzone-content p {
+  margin: 0 0 0.5rem 0;
+  color: #666;
+}
+
+.dropzone-content small {
+  color: #999;
+}
+
+.selfie-preview {
+  text-align: center;
+}
+
+.preview-container {
+  position: relative;
+  display: inline-block;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.preview-image {
+  max-width: 200px;
+  max-height: 200px;
+  width: auto;
+  height: auto;
+  display: block;
+}
+
+.preview-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 0.5rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.preview-container:hover .preview-overlay {
+  opacity: 1;
+}
+
+.file-info {
+  margin-top: 0.5rem;
+  color: #666;
+}
+
+.error-message {
+  color: #e74c3c;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
