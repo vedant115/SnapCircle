@@ -24,9 +24,7 @@ services:
 
       # 5) Finally, install everything else from requirements.txt as wheels only
       pip install --only-binary=:all: -r requirements.txt
-    startCommand: |
-      cd backend
-      python start.py
+    startCommand: cd backend && python start.py
     envVars:
       - key: DATABASE_URL
         fromDatabase:
