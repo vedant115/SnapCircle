@@ -3,10 +3,10 @@ databases:
     plan: free
 
 services:
-  # Backend API Service
   - type: web
     name: snapcircle-backend
     env: python
+    plan: free
     buildCommand: |
       cd backend
 
@@ -24,9 +24,11 @@ services:
 
       # 5) Finally, install everything else from requirements.txt as wheels only
       pip install --only-binary=:all: -r requirements.txt
-    startCommand: "cd backend && python start.py"
-    plan: free
+    startCommand: cd backend && python start.py
     envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: snapcircle-database
       - key: SECRET_KEY
         generateValue: true
       - key: AWS_ACCESS_KEY_ID
@@ -40,9 +42,8 @@ services:
       - key: USE_S3_STORAGE
         value: true
 
-  # Frontend Static Site
   - type: web
     name: snapcircle-frontend
     env: static
-    buildCommand: "cd frontend && npm install && npm run build"
+    buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: frontend/dist
