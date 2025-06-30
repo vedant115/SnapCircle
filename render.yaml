@@ -13,13 +13,16 @@ services:
       # 1) Upgrade pip
       python -m pip install --upgrade pip
 
-      # 2) Install the pre-built dlib wheel
+      # 2) Pre-install dlib from dlib-bin wheels (no compile)
       pip install dlib-bin==19.24.6
 
-      # 3) Install face-recognition-models directly from GitHub (no tag needed)
+      # 3) Pre-install the face-recognition-models package from GitHub
       pip install git+https://github.com/ageitgey/face_recognition_models.git#egg=face-recognition-models
 
-      # 4) Install the rest of your requirements as wheels only
+      # 4) Pre-install face-recognition itself, without trying to pull deps
+      pip install face-recognition==1.3.0 --no-deps
+
+      # 5) Finally, install everything else from requirements.txt as wheels only
       pip install --only-binary=:all: -r requirements.txt
     startCommand: "cd backend && python start.py"
     plan: free
