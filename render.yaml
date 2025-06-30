@@ -7,16 +7,11 @@ services:
   # Backend API Service
   - type: web
     name: snapcircle-backend
-    runtime: python3
+    env: python
     buildCommand: "cd backend && pip install -r requirements.txt"
     startCommand: "cd backend && python start.py"
     plan: free
     envVars:
-      - key: DATABASE_URL
-        fromService:
-          type: pserv
-          name: snapcircle-database
-          property: connectionString
       - key: SECRET_KEY
         generateValue: true
       - key: AWS_ACCESS_KEY_ID
@@ -33,7 +28,7 @@ services:
   # Frontend Static Site
   - type: web
     name: snapcircle-frontend
-    runtime: static
+    env: static
     buildCommand: "cd frontend && npm install && npm run build"
     staticPublishPath: frontend/dist
     plan: free
