@@ -324,24 +324,43 @@ def generate_face_embedding(image_path: str) -> Optional[np.ndarray]:
         raise FaceRecognitionError(f"Failed to generate face embedding: {e}")
 
 
-def find_matching_users(face_embedding: np.ndarray, db: Session, threshold: float = FACE_RECOGNITION_TOLERANCE) -> List[Tuple[int, float]]:
+def find_matching_users(face_embedding: np.ndarray, db: Session, threshold: float = FACE_RECOGNITION_TOLERANCE, event_id: Optional[int] = None) -> List[Tuple[int, float]]:
     """
     Find users with similar face embeddings using improved matching algorithm.
+    Optionally limit search to users registered for a specific event.
 
     Args:
         face_embedding: Face embedding to match against
         db: Database session
         threshold: Similarity threshold (lower is more strict)
+        event_id: Optional event ID to limit search to registered users only
 
     Returns:
         List of tuples (user_id, distance) sorted by similarity
     """
     try:
         from models.user import User
+        from models.event_registration import EventRegistration
 
-        # Get all users with embeddings
-        users_with_embeddings = db.query(User).filter(User.embedding.isnot(None)).all()
-        logger.info(f"Checking {len(users_with_embeddings)} users with face embeddings")
+        # Build query based on whether event filtering is requested
+        if event_id:
+            # Optimized: Only get users registered for this specific event
+            users_with_embeddings = db.query(User).join(
+                EventRegistration, User.id == EventRegistration.user_id
+            ).filter(
+                EventRegistration.event_id == event_id,
+                User.embedding.isnot(None)
+            ).all()
+
+            # Also get total users for comparison
+            total_users_with_embeddings = db.query(User).filter(User.embedding.isnot(None)).count()
+
+            logger.info(f"🎯 OPTIMIZED SEARCH: Checking {len(users_with_embeddings)} users registered for event {event_id}")
+            logger.info(f"📊 Performance gain: {total_users_with_embeddings - len(users_with_embeddings)} fewer comparisons ({((total_users_with_embeddings - len(users_with_embeddings)) / max(total_users_with_embeddings, 1) * 100):.1f}% reduction)")
+        else:
+            # Fallback: Get all users with embeddings (original behavior)
+            users_with_embeddings = db.query(User).filter(User.embedding.isnot(None)).all()
+            logger.info(f"🔍 FULL SEARCH: Checking {len(users_with_embeddings)} users with face embeddings")
 
         all_matches = []  # Store all comparisons for analysis
         confirmed_matches = []  # Store only confirmed matches
@@ -395,6 +414,31 @@ def find_matching_users(face_embedding: np.ndarray, db: Session, threshold: floa
     except Exception as e:
         logger.error(f"Error finding matching users: {e}")
         return []
+
+
+def find_matching_users_for_event(face_embedding: np.ndarray, event_id: int, db: Session, threshold: float = FACE_RECOGNITION_TOLERANCE) -> List[Tuple[int, float]]:
+    """
+    Optimized function to find matching users specifically for an event.
+    Only compares against users registered for the given event.
+
+    Args:
+        face_embedding: Face embedding to match against
+        event_id: Event ID to limit search to registered users
+        db: Database session
+        threshold: Similarity threshold (lower is more strict)
+
+    Returns:
+        List of tuples (user_id, distance) sorted by similarity
+    """
+    import time
+    start_time = time.time()
+
+    result = find_matching_users(face_embedding, db, threshold, event_id)
+
+    processing_time = time.time() - start_time
+    logger.info(f"⚡ Event-optimized face matching completed in {processing_time:.3f} seconds")
+
+    return result
 
 
 def compare_faces(known_embedding: np.ndarray, unknown_embedding: np.ndarray, tolerance: float = FACE_RECOGNITION_TOLERANCE) -> Tuple[bool, float]:

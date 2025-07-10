@@ -26,7 +26,7 @@ from utils.face_recognition_utils import (
     validate_face_image,
     FaceRecognitionError,
     detect_faces_in_image,
-    find_matching_users
+    find_matching_users_for_event
 )
 
 router = APIRouter()
@@ -407,8 +407,8 @@ async def process_faces_in_photos(
                     if existing_face:
                         continue  # Skip if already processed
 
-                    # Find matching users
-                    matches = find_matching_users(face_data["embedding"], db)
+                    # Find matching users (optimized to only check users registered for this event)
+                    matches = find_matching_users_for_event(face_data["embedding"], event.id, db)
                     matched_user_id = matches[0][0] if matches else None
 
                     # Create PhotoFace record
