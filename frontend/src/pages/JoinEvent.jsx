@@ -443,16 +443,17 @@ const JoinEvent = () => {
             </div>
           </div>
         )}
-
-        <div className="join-help">
-          <h4>How to join an event:</h4>
-          <ul>
-            <li>Get the event ID from the event organizer</li>
-            <li>Enter the ID in the field above and click "Find Event"</li>
-            <li>Review the event details and click "Join Event"</li>
-            <li>You can also use a direct link shared by the organizer</li>
-          </ul>
-        </div>
+        {!urlEventCode && (
+          <div className="join-help">
+            <h4>How to join an event:</h4>
+            <ul>
+              <li>Get the event ID from the event organizer</li>
+              <li>Enter the ID in the field above and click "Find Event"</li>
+              <li>Review the event details and click "Join Event"</li>
+              <li>You can also use a direct link shared by the organizer</li>
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   );

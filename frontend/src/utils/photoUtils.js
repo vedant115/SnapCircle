@@ -4,12 +4,31 @@
  */
 
 /**
+ * Get the dynamic base URL for the API
+ * @returns {string} The base URL for API requests
+ */
+const getAPIBaseURL = () => {
+  // In production, use the environment variable set by Render
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+
+  // In development, use localhost
+  if (import.meta.env.DEV) {
+    return "http://localhost:8000";
+  }
+
+  // Fallback for production if env var not set
+  return window.location.origin.replace(/:\d+/, ":8000");
+};
+
+/**
  * Get the correct URL for a photo based on storage type
  * @param {string} imagePath - The image path from the API (presigned URL or local URL)
- * @param {string} baseUrl - Base URL for local storage (default: http://localhost:8000)
+ * @param {string} baseUrl - Base URL for local storage (optional, uses dynamic URL if not provided)
  * @returns {string} The complete URL to access the photo
  */
-export const getPhotoUrl = (imagePath, baseUrl = "http://localhost:8000") => {
+export const getPhotoUrl = (imagePath, baseUrl = null) => {
   if (!imagePath) {
     return "";
   }
@@ -21,7 +40,8 @@ export const getPhotoUrl = (imagePath, baseUrl = "http://localhost:8000") => {
   }
 
   // For relative paths (legacy local storage), construct local URL
-  return `${baseUrl}/uploads/${imagePath}`;
+  const apiBaseUrl = baseUrl || getAPIBaseURL();
+  return `${apiBaseUrl}/uploads/${imagePath}`;
 };
 
 /**

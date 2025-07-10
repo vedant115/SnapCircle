@@ -3,11 +3,12 @@ from qrcode.image.styledpil import StyledPilImage
 from qrcode.image.styles.moduledrawers import RoundedModuleDrawer
 import io
 import base64
+import os
 from typing import Optional
 
 def generate_event_qr_code(
     event_code: str,
-    base_url: str = "http://localhost:3000",
+    base_url: str = None,
     size: int = 10,
     border: int = 4
 ) -> str:
@@ -16,13 +17,17 @@ def generate_event_qr_code(
 
     Args:
         event_code: The event code (6-character string)
-        base_url: Base URL of the frontend application
+        base_url: Base URL of the frontend application (if None, uses environment variable)
         size: Size of the QR code (1-40)
         border: Border size around the QR code
 
     Returns:
         Base64 encoded PNG image of the QR code
     """
+    # Get frontend URL from environment or use provided base_url
+    if base_url is None:
+        base_url = os.getenv("FRONTEND_URL", "http://localhost:3000")
+
     # Create the registration URL
     registration_url = f"{base_url}/join/{event_code}"
     

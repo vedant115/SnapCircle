@@ -208,7 +208,7 @@ def delete_file(file_path_or_url: str) -> bool:
     except Exception:
         return False
 
-def get_file_url(file_path_or_url: str, base_url: str = "http://localhost:8000") -> str:
+def get_file_url(file_path_or_url: str, base_url: str = None) -> str:
     """Generate a URL for accessing an uploaded file."""
     if not file_path_or_url:
         return ""
@@ -216,6 +216,11 @@ def get_file_url(file_path_or_url: str, base_url: str = "http://localhost:8000")
     # If this is already a full URL (S3), return as-is
     if file_path_or_url.startswith('http'):
         return file_path_or_url
+
+    # Get base URL from environment if not provided
+    if base_url is None:
+        # Try to get from environment, fallback to localhost for development
+        base_url = os.getenv("BACKEND_URL", "http://localhost:8000")
 
     # For local files, generate URL
     normalized_path = file_path_or_url.replace("\\", "/")

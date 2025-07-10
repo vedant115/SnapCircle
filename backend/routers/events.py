@@ -422,12 +422,15 @@ async def get_event_qr_code(
             detail="Only event owner can generate QR code"
         )
 
-    # Generate QR code
-    qr_code_data = generate_event_qr_code(event.event_code)
+    # Get frontend URL from environment
+    frontend_url = os.getenv("FRONTEND_URL", "http://localhost:3000")
+
+    # Generate QR code with dynamic URL
+    qr_code_data = generate_event_qr_code(event.event_code, frontend_url)
 
     return {
         "qr_code": qr_code_data,
-        "registration_url": f"http://localhost:3000/join/{event.event_code}"
+        "registration_url": f"{frontend_url}/join/{event.event_code}"
     }
 
 @router.get("/code/{event_code}", response_model=EventWithDetails)

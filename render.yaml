@@ -42,9 +42,16 @@ services:
         sync: false
       - key: USE_S3_STORAGE
         value: true
+      - key: FRONTEND_URL
+        value: https://snapcircle-frontend.onrender.com
+      - key: BACKEND_URL
+        value: https://snapcircle-backend.onrender.com
 
   - type: web
     name: snapcircle-frontend
     env: static
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: frontend/dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://snapcircle-backend.onrender.com

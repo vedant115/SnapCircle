@@ -887,7 +887,7 @@ const EventPage = () => {
                   <div className="share-item">
                     <input
                       type="text"
-                      value={`http://localhost:3000/join/${event.event_code}`}
+                      value={`${window.location.origin}/join/${event.event_code}`}
                       readOnly
                       className="share-input"
                     />
