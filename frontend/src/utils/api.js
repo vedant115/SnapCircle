@@ -12,8 +12,13 @@ const getBaseURL = () => {
     return "http://localhost:8000";
   }
 
-  // Fallback for production if env var not set
-  return window.location.origin.replace(/:\d+/, ":8000");
+  // Fallback for production - use the production backend URL
+  if (window.location.hostname === "snapcircle-frontend.onrender.com") {
+    return "https://snapcircle-backend.onrender.com";
+  }
+
+  // Default fallback
+  return "http://localhost:8000";
 };
 
 const api = axios.create({
