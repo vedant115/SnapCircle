@@ -386,7 +386,6 @@ body {
 .event-date {
   color: #666;
   font-size: 0.9rem;
-  margin-bottom: 10px;
 }
 
 .event-stats {
@@ -698,7 +697,6 @@ body {
 }
 
 .event-owner {
-  margin-top: 10px;
   color: #888;
   font-style: italic;
 }

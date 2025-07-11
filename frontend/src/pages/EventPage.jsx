@@ -135,6 +135,14 @@ const EventPage = () => {
     console.log("📸 Photo upload completed, updating state...");
     setPhotos((prevPhotos) => [...prevPhotos, ...newPhotos]);
 
+    // Show success toast notification
+    const photoCount = newPhotos.length;
+    const message =
+      photoCount === 1
+        ? "Photo uploaded successfully!"
+        : `${photoCount} photos uploaded successfully!`;
+    toast.success(message);
+
     // Refresh event data to update photo count
     console.log("🔄 Refreshing event data to update photo count...");
     await fetchEventData();
