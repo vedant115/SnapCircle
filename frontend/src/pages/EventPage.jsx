@@ -872,15 +872,23 @@ const EventPage = () => {
                   </button>
                 </div>
               ) : (
-                <div className="guests-list">
-                  {guests.map((guest) => (
-                    <div key={guest.id} className="guest-item">
-                      <div className="guest-info">
-                        <strong>{guest.name}</strong>
-                        <span>{guest.email}</span>
-                      </div>
-                    </div>
-                  ))}
+                <div className="guests-table-container">
+                  <table className="guests-table">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {guests.map((guest) => (
+                        <tr key={guest.id}>
+                          <td>{guest.name}</td>
+                          <td>{guest.email}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               )}
             </div>

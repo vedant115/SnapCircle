@@ -273,3 +273,60 @@
   font-size: 0.8rem;
   margin-top: 0.5rem;
 }
+
+/* Guests Table Styles */
+.guests-table-container {
+  margin-top: 1rem;
+  overflow-x: auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.guests-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  min-width: 400px;
+}
+
+.guests-table thead {
+  background: #f8f9fa;
+}
+
+.guests-table th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: #374151;
+  border-bottom: 2px solid #e5e7eb;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.guests-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  color: #374151;
+}
+
+.guests-table tbody tr:hover {
+  background: #f9fafb;
+}
+
+.guests-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Mobile responsiveness for guests table */
+@media (max-width: 768px) {
+  .guests-table th,
+  .guests-table td {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  .guests-table th {
+    font-size: 0.75rem;
+  }
+}
