@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "./SelfieUpload.css";
 
 const SelfieUpload = ({
@@ -8,90 +8,104 @@ const SelfieUpload = ({
   disabled = false,
   required = true,
 }) => {
-  const [dragOver, setDragOver] = useState(false);
+  const [isCapturing, setIsCapturing] = useState(false);
   const [preview, setPreview] = useState(null);
-  const fileInputRef = useRef(null);
+  const [stream, setStream] = useState(null);
+  const [cameraError, setCameraError] = useState("");
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
 
-  const handleFileSelect = (file) => {
-    if (!file) return;
-
-    // Validate file type
-    if (!file.type.startsWith("image/")) {
-      onFileSelect(null, "Please select an image file");
-      return;
-    }
-
-    // Validate file size (max 10MB)
-    if (file.size > 10 * 1024 * 1024) {
-      onFileSelect(null, "File size must be less than 10MB");
-      return;
-    }
-
-    // Create preview
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      setPreview(e.target.result);
+  // Cleanup camera stream when component unmounts
+  useEffect(() => {
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach((track) => track.stop());
+      }
     };
-    reader.readAsDataURL(file);
+  }, [stream]);
 
-    onFileSelect(file, null);
-  };
+  const startCamera = async () => {
+    try {
+      setCameraError("");
+      setIsCapturing(true);
 
-  const handleDragOver = (e) => {
-    e.preventDefault();
-    if (!disabled) {
-      setDragOver(true);
+      const mediaStream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          width: { ideal: 640 },
+          height: { ideal: 480 },
+          facingMode: "user", // Front camera for selfies
+        },
+      });
+
+      setStream(mediaStream);
+      if (videoRef.current) {
+        videoRef.current.srcObject = mediaStream;
+      }
+    } catch (err) {
+      console.error("Camera access error:", err);
+      setCameraError(
+        "Unable to access camera. Please check your camera permissions."
+      );
+      setIsCapturing(false);
     }
   };
 
-  const handleDragLeave = (e) => {
-    e.preventDefault();
-    setDragOver(false);
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    setDragOver(false);
-
-    if (disabled) return;
-
-    const files = Array.from(e.dataTransfer.files);
-    if (files.length > 0) {
-      handleFileSelect(files[0]);
+  const stopCamera = () => {
+    if (stream) {
+      stream.getTracks().forEach((track) => track.stop());
+      setStream(null);
     }
+    setIsCapturing(false);
   };
 
-  const handleFileInputChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      handleFileSelect(file);
-    }
+  const capturePhoto = () => {
+    if (!videoRef.current || !canvasRef.current) return;
+
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    const context = canvas.getContext("2d");
+
+    // Set canvas dimensions to match video
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    // Draw the video frame to canvas
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    // Convert canvas to blob
+    canvas.toBlob(
+      (blob) => {
+        if (blob) {
+          // Create a File object from the blob
+          const file = new File([blob], `selfie-${Date.now()}.jpg`, {
+            type: "image/jpeg",
+          });
+
+          // Create preview URL
+          const previewUrl = URL.createObjectURL(blob);
+          setPreview(previewUrl);
+
+          // Stop camera and notify parent
+          stopCamera();
+          onFileSelect(file, null);
+        }
+      },
+      "image/jpeg",
+      0.9
+    );
   };
 
-  const openFileDialog = () => {
-    if (!disabled && fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  };
-
-  const clearFile = () => {
+  const retakePhoto = () => {
     setPreview(null);
     onFileSelect(null, null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
+    if (preview) {
+      URL.revokeObjectURL(preview);
     }
   };
 
   return (
     <div className="selfie-upload">
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/*"
-        onChange={handleFileInputChange}
-        style={{ display: "none" }}
-        disabled={disabled}
-      />
+      <canvas ref={canvasRef} style={{ display: "none" }} />
 
       <div className="form-group">
         <label>
@@ -99,8 +113,8 @@ const SelfieUpload = ({
           {required && <span className="required">*</span>}
         </label>
         <p className="help-text">
-          Upload a clear selfie for face recognition. Make sure your face is
-          clearly visible and well-lit.
+          Take a clear selfie using your camera for face recognition. Make sure
+          your face is clearly visible and well-lit.
         </p>
 
         {preview ? (
@@ -115,42 +129,77 @@ const SelfieUpload = ({
                 <button
                   type="button"
                   className="btn btn-secondary btn-sm"
-                  onClick={clearFile}
+                  onClick={retakePhoto}
                   disabled={disabled}
                 >
-                  Change Photo
+                  Retake Photo
                 </button>
               </div>
             </div>
             {selectedFile && (
               <div className="file-info">
                 <small>
-                  📁 {selectedFile.name} (
+                  📸 Selfie captured (
                   {(selectedFile.size / 1024 / 1024).toFixed(2)} MB)
                 </small>
               </div>
             )}
           </div>
+        ) : isCapturing ? (
+          <div className="camera-container">
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              muted
+              className="camera-video"
+            />
+            <div className="camera-controls">
+              <button
+                type="button"
+                className="btn btn-primary capture-btn"
+                onClick={capturePhoto}
+                disabled={disabled}
+              >
+                📸 Capture Selfie
+              </button>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={stopCamera}
+                disabled={disabled}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
         ) : (
           <div
-            className={`selfie-dropzone ${dragOver ? "dragover" : ""} ${
-              disabled ? "disabled" : ""
-            } ${error ? "error" : ""}`}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-            onClick={openFileDialog}
+            className={`selfie-camera-trigger ${disabled ? "disabled" : ""} ${
+              error || cameraError ? "error" : ""
+            }`}
           >
-            <div className="dropzone-content">
-              <div className="upload-icon">🤳</div>
-              <h4>Upload Your Selfie</h4>
-              <p>Drag and drop your photo here, or click to select</p>
-              <small>JPG, PNG • Max 10MB</small>
+            <div className="camera-content">
+              <div className="camera-icon">📷</div>
+              <h4>Take Your Selfie</h4>
+              <p>
+                Click the button below to open your camera and take a selfie
+              </p>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={startCamera}
+                disabled={disabled}
+              >
+                📸 Open Camera
+              </button>
             </div>
           </div>
         )}
 
-        {error && <div className="error-message">{error}</div>}
+        {(error || cameraError) && (
+          <div className="error-message">{error || cameraError}</div>
+        )}
       </div>
     </div>
   );

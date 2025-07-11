@@ -109,3 +109,96 @@
   font-size: 0.9rem;
   margin-top: 0.5rem;
 }
+
+/* Camera-specific styles */
+.selfie-camera-trigger {
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  background: #fafafa;
+  transition: all 0.3s ease;
+}
+
+.selfie-camera-trigger.disabled {
+  opacity: 0.6;
+  background: #f5f5f5;
+}
+
+.selfie-camera-trigger.error {
+  border-color: #e74c3c;
+  background: #fdf2f2;
+}
+
+.camera-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.camera-icon {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+
+.camera-content h4 {
+  margin: 0;
+  color: #333;
+}
+
+.camera-content p {
+  margin: 0;
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.camera-container {
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem;
+  background: #000;
+  text-align: center;
+}
+
+.camera-video {
+  width: 100%;
+  max-width: 640px;
+  height: auto;
+  border-radius: 8px;
+  background: #000;
+}
+
+.camera-controls {
+  margin-top: 1rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.capture-btn {
+  font-size: 1.1rem;
+  padding: 0.75rem 1.5rem;
+}
+
+/* Mobile responsiveness for camera */
+@media (max-width: 768px) {
+  .camera-video {
+    max-width: 100%;
+  }
+
+  .camera-controls {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .camera-controls button {
+    width: 100%;
+    max-width: 200px;
+  }
+
+  .selfie-camera-trigger {
+    padding: 1.5rem;
+  }
+}
