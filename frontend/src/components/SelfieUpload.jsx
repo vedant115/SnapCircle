@@ -145,9 +145,7 @@ const SelfieUpload = ({
               <div className="upload-icon">🤳</div>
               <h4>Upload Your Selfie</h4>
               <p>Drag and drop your photo here, or click to select</p>
-              <small>
-                JPG, PNG, GIF • Max 10MB • Face must be clearly visible
-              </small>
+              <small>JPG, PNG • Max 10MB</small>
             </div>
           </div>
         )}

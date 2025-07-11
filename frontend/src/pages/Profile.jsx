@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 import { photosAPI, authAPI } from "../utils/api";
 import SelfieUpload from "../components/SelfieUpload";
@@ -32,7 +33,7 @@ const Profile = () => {
 
     try {
       await photosAPI.uploadProfile(selfieFile);
-      setSuccess(
+      toast.success(
         "Profile photo uploaded successfully! Face recognition is now enabled for your account."
       );
       setSelfieFile(null);
@@ -43,10 +44,11 @@ const Profile = () => {
       }
     } catch (err) {
       console.error("Profile upload error:", err);
-      setError(
+      const errorMessage =
         err.response?.data?.detail ||
-          "Failed to upload profile photo. Please try again."
-      );
+        "Failed to upload profile photo. Please try again.";
+      toast.error(errorMessage);
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -98,25 +100,6 @@ const Profile = () => {
           </div>
 
           <div className="profile-photo-section">
-            <h3>Profile Photo & Face Recognition</h3>
-            <p className="section-description">
-              Upload a clear selfie to enable face recognition in event photos.
-              This helps automatically identify you in photos uploaded to events
-              you attend.
-            </p>
-
-            {user.selfie_image_path && (
-              <div className="current-photo">
-                <h4>Current Profile Photo</h4>
-                <div className="photo-status">
-                  <span className="status-indicator">
-                    ✅ Face recognition enabled
-                  </span>
-                  <p>You can upload a new photo to update your face profile.</p>
-                </div>
-              </div>
-            )}
-
             <div className="upload-section">
               <SelfieUpload
                 onFileSelect={handleSelfieSelect}
@@ -149,64 +132,63 @@ const Profile = () => {
               )}
             </div>
 
+            <div className="privacy-note">
+              <p>
+                We don't store your actual face image, only the mathematical
+                data (embeddings)
+              </p>
+            </div>
+
             {error && <div className="error">{error}</div>}
             {success && <div className="success">{success}</div>}
-          </div>
-
-          <div className="privacy-section">
-            <h3>Privacy & Face Recognition</h3>
-            <div className="privacy-info">
-              <h4>How we use your face data:</h4>
-              <ul>
-                <li>
-                  Your face photo is converted to a mathematical representation
-                  (embedding)
-                </li>
-                <li>
-                  We don't store your actual face image, only the mathematical
-                  data
-                </li>
-                <li>
-                  This data is used to automatically identify you in event
-                  photos
-                </li>
-                <li>
-                  You can delete your face data at any time by removing your
-                  profile photo
-                </li>
-                <li>Face data is only used within events you participate in</li>
-              </ul>
-            </div>
           </div>
         </div>
       </div>
 
       <style jsx>{`
         .profile-page {
-          padding: 2rem 0;
+          min-height: 100vh;
+          background: #f5f5f5;
+          padding: 2rem;
+          overflow: hidden;
+        }
+
+        .container {
+          height: 100%;
+          max-width: 1200px;
+          margin: 0 auto;
+          display: flex;
+          flex-direction: column;
+        }
+
+        .page-header {
+          margin-bottom: 2rem;
+          text-align: center;
         }
 
         .profile-content {
-          max-width: 800px;
-          margin: 0 auto;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 2rem;
+          flex: 1;
+          height: calc(100vh - 200px);
         }
 
         .profile-info,
-        .profile-photo-section,
-        .privacy-section {
+        .profile-photo-section {
           background: white;
           border-radius: 8px;
           padding: 2rem;
-          margin-bottom: 2rem;
           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
           color: #333;
+          overflow-y: auto;
         }
 
         .profile-info h3,
-        .profile-photo-section h3,
-        .privacy-section h3 {
+        .profile-photo-section h3 {
           color: #333;
           margin-bottom: 1rem;
+          margin-top: 0;
         }
 
         .profile-photo-section h4 {
@@ -282,27 +264,19 @@ const Profile = () => {
           gap: 1rem;
         }
 
-        .privacy-info {
+        .privacy-note {
+          margin-top: 1.5rem;
+          padding: 1rem;
           background: #f8f9fa;
-          padding: 1.5rem;
           border-radius: 6px;
-          margin-top: 1rem;
+          border-left: 4px solid #007bff;
         }
 
-        .privacy-info h4 {
-          margin: 0 0 1rem 0;
-          color: #333;
-        }
-
-        .privacy-info ul {
+        .privacy-note p {
           margin: 0;
-          padding-left: 1.5rem;
-        }
-
-        .privacy-info li {
-          margin-bottom: 0.5rem;
-          line-height: 1.4;
-          color: #333;
+          color: #666;
+          font-size: 0.9rem;
+          font-style: italic;
         }
 
         .error {
@@ -319,6 +293,27 @@ const Profile = () => {
           padding: 1rem;
           border-radius: 6px;
           margin-top: 1rem;
+        }
+
+        @media (max-width: 768px) {
+          .profile-page {
+            padding: 1rem;
+          }
+
+          .profile-content {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            height: auto;
+          }
+
+          .profile-info,
+          .profile-photo-section {
+            padding: 1.5rem;
+          }
+
+          .upload-actions {
+            flex-direction: column;
+          }
         }
       `}</style>
     </div>
