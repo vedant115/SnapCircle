@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import { eventsAPI, photosAPI } from "../utils/api";
 import { useAuth } from "../context/AuthContext";
 import PhotoUpload from "../components/PhotoUpload";
@@ -343,6 +344,29 @@ const EventPage = () => {
       month: "long",
       day: "numeric",
     });
+  };
+
+  const copyToClipboard = async (text, type) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success(`${type} copied to clipboard!`);
+    } catch (err) {
+      console.error("Failed to copy:", err);
+      // Fallback for older browsers
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      try {
+        document.execCommand("copy");
+        toast.success(`${type} copied to clipboard!`);
+      } catch (fallbackErr) {
+        console.error("Fallback copy failed:", fallbackErr);
+        toast.error(`Failed to copy ${type}. Please copy manually.`);
+      }
+      document.body.removeChild(textArea);
+    }
   };
 
   const isOwner = event?.owner_id === user?.id;
@@ -875,7 +899,14 @@ const EventPage = () => {
                       readOnly
                       className="share-input"
                     />
-                    <button className="btn btn-secondary">Copy</button>
+                    <button
+                      className="btn btn-secondary"
+                      onClick={() =>
+                        copyToClipboard(event.event_code, "Event code")
+                      }
+                    >
+                      Copy
+                    </button>
                   </div>
                   <p>
                     Share this code with guests so they can join your event.
@@ -891,7 +922,17 @@ const EventPage = () => {
                       readOnly
                       className="share-input"
                     />
-                    <button className="btn btn-secondary">Copy</button>
+                    <button
+                      className="btn btn-secondary"
+                      onClick={() =>
+                        copyToClipboard(
+                          `${window.location.origin}/join/${event.event_code}`,
+                          "Direct link"
+                        )
+                      }
+                    >
+                      Copy
+                    </button>
                   </div>
                   <p>Guests can click this link to join directly.</p>
                 </div>
