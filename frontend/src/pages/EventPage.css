@@ -330,3 +330,23 @@
     font-size: 0.75rem;
   }
 }
+
+/* My Photos Section Styles */
+.my-photos-section {
+  margin-top: 1rem;
+}
+
+.my-photos-info {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: #e8f5e8;
+  border-radius: 8px;
+  border-left: 4px solid #28a745;
+}
+
+.photos-found-message {
+  margin: 0;
+  color: #155724;
+  font-weight: 500;
+  font-size: 1rem;
+}

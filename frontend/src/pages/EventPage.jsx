@@ -752,47 +752,39 @@ const EventPage = () => {
               <div className="my-photos-content">
                 {user?.selfie_image_path ? (
                   <div className="face-recognition-active">
-                    <div className="status-message">
-                      <span className="status-icon">✅</span>
-                      <div>
-                        <h4>Face Recognition Enabled</h4>
-                        <p>
-                          We'll automatically identify photos where you appear
-                          once the event organizer processes the photos.
-                        </p>
-                      </div>
-                    </div>
-
                     {myPhotosLoading ? (
-                      <div className="waiting-message">
-                        <div className="waiting-icon">🔄</div>
-                        <h4>Loading Your Photos...</h4>
-                        <p>Searching for photos where you appear...</p>
-                      </div>
+                      <>
+                        <div className="status-message">
+                          <span className="status-icon">✅</span>
+                          <div>
+                            <h4>Face Recognition Enabled</h4>
+                            <p>
+                              We'll automatically identify photos where you
+                              appear once the event organizer processes the
+                              photos.
+                            </p>
+                          </div>
+                        </div>
+                        <div className="waiting-message">
+                          <div className="waiting-icon">🔄</div>
+                          <h4>Loading Your Photos...</h4>
+                          <p>Searching for photos where you appear...</p>
+                        </div>
+                      </>
                     ) : myPhotos.length > 0 ? (
-                      <div className="my-photos-gallery">
-                        {myPhotos.map((photo) => {
-                          const myFaces = photo.faces.filter(
-                            (face) => face.matched_user_id === user.id
-                          );
-                          return (
-                            <div key={photo.id} className="my-photo-item">
-                              <img
-                                src={getPhotoUrl(photo.image_path)}
-                                alt="Photo where you appear"
-                              />
-                              <div className="my-photo-overlay">
-                                <div className="face-count">
-                                  {myFaces.length} face
-                                  {myFaces.length !== 1 ? "s" : ""} matched
-                                </div>
-                                <div className="matched-indicator">
-                                  ✅ You appear here
-                                </div>
-                              </div>
-                            </div>
-                          );
-                        })}
+                      <div className="my-photos-section">
+                        <div className="my-photos-info">
+                          <p className="photos-found-message">
+                            📸 Found {myPhotos.length} photo
+                            {myPhotos.length !== 1 ? "s" : ""} where you appear!
+                            Click any photo to view and download.
+                          </p>
+                        </div>
+                        <PhotoGallery
+                          photos={myPhotos}
+                          eventOwnerId={event.owner_id}
+                          onPhotoDelete={null}
+                        />
                       </div>
                     ) : faceProcessingResults ? (
                       <div className="waiting-message">
